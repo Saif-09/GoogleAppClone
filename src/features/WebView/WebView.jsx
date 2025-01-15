@@ -1,16 +1,14 @@
-import React, { Component, useReducer } from 'react';
-import { Image, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React from 'react';
+import { Image, SafeAreaView, StatusBar, TouchableOpacity, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { rw } from '../../utils/helpers/responsiveHelper';
 import { Colors } from '../../styles/colors';
 
-const WebViewScreen = ({}) => {
+const WebViewScreen = ({ }) => {
     const route = useRoute();
-    console.log(route, "route")
     const link = route.params.url
-    console.log(link, "link")
     const navigation = useNavigation();
     const backPress = () => {
         navigation.goBack();
@@ -18,7 +16,6 @@ const WebViewScreen = ({}) => {
     return (
         <View style={{ flex: 1 }}>
             <StatusBar barStyle={'dark-content'} />
-
             <SafeAreaView style={{}} />
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: Colors.background.primary }}>
                 <TouchableOpacity
