@@ -16,16 +16,17 @@ import { Modalize } from 'react-native-modalize';
 import { rw } from '../../../utils/helpers/responsiveHelper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import axios from 'axios';
-import { useNavigation } from '@react-navigation/native';
+import { Link, useNavigation } from '@react-navigation/native';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';
-import {SCRAPING_DOG_API_KEY, CLOUD_NAME} from '@env';
+import { SCRAPING_DOG_API_KEY, CLOUD_NAME } from '@env';
 import CameraLens from '../components/CameraLens';
+import { openWebView } from '../../../utils/helpers/WebViewOpener';
 
 
 const LensScreen = () => {
     const device = useCameraDevice('back');
     const camera = useRef(null);
-    const modalizeRef = useRef(null); // Ref for Modalize
+    const modalizeRef = useRef(null);
     const [imagePath, setImagePath] = useState('');
     const [flashMode, setFlashMode] = useState('off');
     const [loading, setLoading] = useState(false);
@@ -45,14 +46,13 @@ const LensScreen = () => {
         if (camera.current) {
             const photo = await camera.current.takePhoto({ flash: flashMode });
             setImagePath(photo.path);
-            modalizeRef.current?.open(); // Open the bottom sheet
-            setLoading(true); // Set loading to true
-            await processImage(photo.path); // Process the image
+            modalizeRef.current?.open();
+            setLoading(true);
+            await processImage(photo.path);
         }
     };
 
     const processImage = async (path) => {
-        setLoading(true);
         try {
             const imageUrl = await uploadToCloudinary(path);
             console.log('Uploaded Image URL:', imageUrl);
@@ -71,7 +71,6 @@ const LensScreen = () => {
             if (response.status === 200) {
                 setResults(response.data.lens_results);
                 console.log('ScrapingDog Results:', response.data.lens_results);
-                modalizeRef.current?.open();
             } else {
                 console.error('ScrapingDog API Error (non-200):', response);
                 Alert.alert('Error', 'Failed to fetch Google Lens results');
@@ -119,16 +118,16 @@ const LensScreen = () => {
                             <ShimmerPlaceHolder
                                 style={{ width: '100%', height: 150, borderRadius: 8, marginBottom: 8, }}
                                 autoRun={true}
-                                duration={1500} 
-                                shimmerColors={['#3A3A3A', '#4A4A4A', '#3A3A3A']} 
-                                shimmerWidth={400} 
+                                duration={1500}
+                                shimmerColors={['#3A3A3A', '#4A4A4A', '#3A3A3A']}
+                                shimmerWidth={400}
                             />
                             <ShimmerPlaceHolder
                                 style={{ width: '100%', height: 20, borderRadius: 4 }}
                                 autoRun={true}
-                                duration={1500} 
-                                shimmerColors={['#3A3A3A', '#4A4A4A', '#3A3A3A']} 
-                                shimmerWidth={400} 
+                                duration={1500}
+                                shimmerColors={['#3A3A3A', '#4A4A4A', '#3A3A3A']}
+                                shimmerWidth={400}
                             />
                         </View>
                     ))}
@@ -144,13 +143,15 @@ const LensScreen = () => {
                 ) : (
                     <View style={styles.resultsContainer}>
                         {results.map((result, index) => (
-                            <View key={index} style={styles.resultCard}>
+                            <TouchableOpacity
+                                onPress={() => openWebView(result.link, navigation)}
+                                key={index} style={styles.resultCard}>
                                 <Image
                                     source={{ uri: result.thumbnail }}
                                     style={styles.resultImageLarge}
                                 />
                                 <Text style={styles.resultTitleSmall}>{result.title}</Text>
-                            </View>
+                            </TouchableOpacity>
                         ))}
                     </View>
                 )}
@@ -183,7 +184,7 @@ const LensScreen = () => {
                 <Text style={styles.headerText}>Google Lens</Text>
                 <View style={{ width: rw(100) }} />
             </View>
-            <CameraLens/>
+            <CameraLens />
 
             <TouchableOpacity
                 onPress={clickPhoto}
@@ -287,7 +288,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     shimmerItem: {
-        width: '48%', // Matches the layout of result cards
+        width: '48%',
         marginBottom: rw(10),
     },
     resultsContainer: {

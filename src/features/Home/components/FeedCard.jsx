@@ -4,12 +4,14 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import EvIcon from 'react-native-vector-icons/EvilIcons';
 import { rw } from '../../../utils/helpers/responsiveHelper';
 import { Colors } from '../../../styles/colors';
+import { openWebView } from '../../../utils/helpers/WebViewOpener';
 
-const FeedCard = ({ item, openURL }) => {
+const FeedCard = ({ item, navigation }) => {
+    
     return (
         <TouchableOpacity
             key={item.id}
-            onPress={() => openURL(item.url)} 
+            onPress={() => openWebView(item.url, navigation)}
             style={{
                 marginVertical: 10,
                 overflow: 'hidden',

@@ -1,7 +1,9 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Linking, Alert, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { isIOS, rw } from '../../../utils/helpers/responsiveHelper';
+import { rw } from '../../../utils/helpers/responsiveHelper';
+import { useNavigation } from '@react-navigation/native';
+import { openWebView } from '../../../utils/helpers/WebViewOpener';
 
 const IconButton = ({ icon, backgroundColor, iconColor, onPress }) => {
     return (
@@ -15,51 +17,33 @@ const IconButton = ({ icon, backgroundColor, iconColor, onPress }) => {
 };
 
 const ServiceSection = () => {
-    const openURL = async (url) => {
-        try {
-            if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                url = `https://${url}`;
-            }
 
-            if (isIOS) {
-                const supported = await Linking.canOpenURL(url);
-                if (!supported) {
-                    Alert.alert('Error', 'Unable to open this link.');
-                    return;
-                }
-            }
-
-            await Linking.openURL(url);
-        } catch (error) {
-            console.error('Failed to open URL:', error);
-            Alert.alert('Error', 'Failed to open link.');
-        }
-    };
-
+    const navigation = useNavigation();
+    
     const buttons = [
         {
             icon: 'image-search',
             backgroundColor: '#51422b',
             iconColor: '#be9347',
-            onPress: () => openURL('https://images.google.com'),
+            onPress: () => openWebView('https://images.google.com', navigation),
         },
         {
             icon: 'translate',
             backgroundColor: '#393f4f',
             iconColor: '#8db2f8',
-            onPress: () => openURL('https://translate.google.com'),
+            onPress: () => openWebView('https://translate.google.com', navigation),
         },
         {
             icon: 'school',
             backgroundColor: '#364e41',
             iconColor: '#70d69d',
-            onPress: () => openURL('https://classroom.google.com'),
+            onPress: () => openWebView('https://classroom.google.com', navigation),
         },
         {
             icon: 'music-note',
             backgroundColor: '#614542',
             iconColor: '#feb2b0',
-            onPress: () => openURL('https://music.youtube.com'),
+            onPress: () => openWebView('https://music.youtube.com', navigation),
         },
     ];
 

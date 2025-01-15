@@ -5,7 +5,6 @@ import {
     View,
     FlatList,
     TouchableOpacity,
-    Linking,
     SafeAreaView,
     Image,
     Animated,
@@ -17,6 +16,7 @@ import { useNavigation } from '@react-navigation/native';
 import { rw } from '../../../utils/helpers/responsiveHelper';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import { SERP_API } from '@env';
+import { openWebView } from '../../../utils/helpers/WebViewOpener';
 
 const SearchResultsPage = ({ route }) => {
     const { query, openBottomSheet } = route.params || {};
@@ -81,22 +81,9 @@ const SearchResultsPage = ({ route }) => {
         fetchSearchResults();
     }, [query]);
 
-    const openURL = async (url) => {
-        try {
-            const supported = await Linking.canOpenURL(url);
-            if (supported) {
-                await Linking.openURL(url);
-            } else {
-                Alert.alert('Error', 'Unable to open this link.');
-            }
-        } catch (error) {
-            console.error('Failed to open URL:', error.message);
-        }
-    };
-
     const renderResult = ({ item }) => (
         <TouchableOpacity
-            onPress={() => openURL(item.link)}
+            onPress={() => openWebView(item.link, navigation)}
             style={styles.resultContainer}
         >
             {item.image && (

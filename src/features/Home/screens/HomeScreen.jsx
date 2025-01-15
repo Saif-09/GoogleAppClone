@@ -4,12 +4,10 @@ import {
     SafeAreaView,
     ScrollView,
     View,
-    Linking,
-    Alert,
     RefreshControl,
-    Animated, // Import Animated
+    Animated, 
 } from 'react-native';
-import { isIOS, rw } from '../../../utils/helpers/responsiveHelper';
+import { rw } from '../../../utils/helpers/responsiveHelper';
 import { useNavigation } from '@react-navigation/native';
 import {NEWS_API_KEY} from '@env';
 import axios from 'axios';
@@ -22,6 +20,7 @@ import {
     BottomSheet,
 } from '../components';
 import { Colors } from '../../../styles/colors';
+import { openURL } from '../../../utils/helpers/LinkOpener';
 
 const HomeScreen = () => {
     const modalizeRef = useRef(null);
@@ -76,26 +75,6 @@ const HomeScreen = () => {
         }
     }, [navigation]);
 
-    const openURL = useCallback(async (url) => {
-        if (!url.startsWith('http://') && !url.startsWith('https://')) {
-            url = `https://${url}`;
-        }
-        try {
-            if (isIOS) {
-                const supported = await Linking.canOpenURL(url);
-                if (supported) {
-                    await Linking.openURL(url);
-                } else {
-                    Alert.alert('Error', 'Unable to open this link.');
-                }
-            } else {
-                await Linking.openURL(url);
-            }
-        } catch (error) {
-            console.error('Failed to open URL:', error.message);
-            Alert.alert('Error', 'Failed to open link.');
-        }
-    }, []);
 
     const handleLensButton = useCallback(() => {
         navigation.navigate('Lens');
@@ -108,6 +87,7 @@ const HomeScreen = () => {
     const memoizedSuggestions = useMemo(() => {
         if (searchText.trim()) {
             return [
+                `${searchText}`,
                 `${searchText} tips`,
                 `${searchText} news`,
                 `What is ${searchText}?`,
@@ -190,7 +170,7 @@ const HomeScreen = () => {
                 <FlatList
                     data={feedData}
                     renderItem={({ item }) => (
-                        <FeedCard item={item} openURL={openURL} />
+                        <FeedCard item={item} openURL={openURL} navigation={navigation}/>
                     )}
                     keyExtractor={(item, index) => index.toString()}
                     contentContainerStyle={{ paddingBottom: 20, paddingTop: rw(10) }}

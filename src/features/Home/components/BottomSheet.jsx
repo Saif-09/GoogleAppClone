@@ -3,7 +3,7 @@ import { SafeAreaView, View, TouchableOpacity, TextInput, FlatList, ActivityIndi
 import { Modalize } from 'react-native-modalize';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import LensIcon from '../../../assets/icons/svgs/LensIcon';
-import { isIOS, rw } from '../../../utils/helpers/responsiveHelper';
+import { rw } from '../../../utils/helpers/responsiveHelper';
 import { Colors } from '../../../styles/colors';
 
 const BottomSheet = ({

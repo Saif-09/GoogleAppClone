@@ -17,6 +17,7 @@ import { useNavigation } from '@react-navigation/native';
 import { rw } from '../../../utils/helpers/responsiveHelper';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import { SERP_API } from '@env';
+import { openWebView } from '../../../utils/helpers/WebViewOpener';
 
 const SearchScreen = ({ route }) => {
     const { query, openBottomSheet } = route.params || {};
@@ -81,22 +82,9 @@ const SearchScreen = ({ route }) => {
         fetchSearchResults();
     }, [query]);
 
-    const openURL = async (url) => {
-        try {
-            const supported = await Linking.canOpenURL(url);
-            if (supported) {
-                await Linking.openURL(url);
-            } else {
-                Alert.alert('Error', 'Unable to open this link.');
-            }
-        } catch (error) {
-            console.error('Failed to open URL:', error.message);
-        }
-    };
-
     const renderResult = ({ item }) => (
         <TouchableOpacity
-            onPress={() => openURL(item.link)}
+            onPress={() => openWebView(item.link, navigation)}
             style={styles.resultContainer}
         >
             {item.image && (
@@ -120,23 +108,23 @@ const SearchScreen = ({ route }) => {
                 <ShimmerPlaceholder
                     style={styles.resultImage}
                     autoRun={true}
-                    visible={!loading} 
+                    visible={!loading}
                 />
                 <View style={styles.resultTextContainer}>
                     <ShimmerPlaceholder
                         style={styles.shimmerText}
                         autoRun={true}
-                        visible={!loading} 
+                        visible={!loading}
                     />
                     <ShimmerPlaceholder
                         style={styles.shimmerText}
                         autoRun={true}
-                        visible={!loading} 
+                        visible={!loading}
                     />
                     <ShimmerPlaceholder
                         style={styles.shimmerText}
                         autoRun={true}
-                        visible={!loading} 
+                        visible={!loading}
                     />
                 </View>
             </View>
@@ -183,7 +171,7 @@ const SearchScreen = ({ route }) => {
             {query ? (
                 loading ? (
                     <FlatList
-                        data={[...Array(5)]} 
+                        data={[...Array(5)]}
                         renderItem={renderShimmer}
                         keyExtractor={(item, index) => index.toString()}
                         contentContainerStyle={styles.resultList}

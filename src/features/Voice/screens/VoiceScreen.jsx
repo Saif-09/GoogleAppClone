@@ -65,6 +65,10 @@ const VoiceSearchScreen = ({ navigation }) => {
             Alert.alert('Error', 'Could not start voice recognition.');
         }
     };
+    
+    useEffect(()=>{
+        startListening()
+    },[])
 
     return (
         <SafeAreaView style={styles.container}>

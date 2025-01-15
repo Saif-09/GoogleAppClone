@@ -1,9 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Linking, Alert, SafeAreaView,  } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Linking, Alert, SafeAreaView, } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { isIOS, rw } from '../../../utils/helpers/responsiveHelper';
+import { rw } from '../../../utils/helpers/responsiveHelper';
+import { openWebView } from '../../../utils/helpers/WebViewOpener';
+import { useNavigation } from '@react-navigation/native';
 
 const OptionsScreen = () => {
+    const navigation = useNavigation()
     const options = [
         { id: 1, label: 'Gemini', icon: 'star', url: 'https://gemini.google.com' },
         { id: 2, label: 'Search Labs', icon: 'science', url: 'https://labs.google.com' },
@@ -12,28 +15,6 @@ const OptionsScreen = () => {
         { id: 5, label: 'Change app icon', icon: 'app-settings-alt', url: 'https://myaccount.google.com' },
         { id: 6, label: 'Add Search widget', icon: 'widgets', url: 'https://support.google.com' },
     ];
-
-    const handleOptionPress = async (url) => {
-        try {
-            if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                url = `https://${url}`;
-            }
-
-            if (isIOS) {
-                const supported = await Linking.canOpenURL(url);
-                if (supported) {
-                    await Linking.openURL(url);
-                } else {
-                    Alert.alert('Error', 'Unable to open this link. Please install a browser.');
-                }
-            } else {
-                await Linking.openURL(url);
-            }
-        } catch (error) {
-            console.error('Failed to open URL:', error);
-            Alert.alert('Error', 'Failed to open link.');
-        }
-    };
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: '#1c1c1c' }}>
@@ -44,7 +25,7 @@ const OptionsScreen = () => {
                         <TouchableOpacity
                             key={option.id}
                             style={styles.card}
-                            onPress={() => handleOptionPress(option.url)}
+                            onPress={() => openWebView(option.url, navigation)}
                         >
                             <View style={styles.iconContainer}>
                                 <Icon name={option.icon} size={20} color="#8db2f8" />

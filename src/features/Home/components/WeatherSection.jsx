@@ -15,11 +15,14 @@ import Geolocation from '@react-native-community/geolocation';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { rw } from '../../../utils/helpers/responsiveHelper';
 import {WEATHER_API_KEY} from '@env';
+import { openWebView } from '../../../utils/helpers/WebViewOpener';
+import { useNavigation } from '@react-navigation/native';
 
 const WeatherSection = () => {
     const [weatherData, setWeatherData] = useState(null);
     const [airQuality, setAirQuality] = useState(null);
     const [loading, setLoading] = useState(true);
+    const navigation = useNavigation()
 
     const requestLocationPermission = async () => {
         if (Platform.OS === 'android') {
@@ -54,15 +57,11 @@ const WeatherSection = () => {
 
     const openWeatherApp = () => {
         if (weatherData) {
-            const { name, coord } = weatherData;
-            const { lat, lon } = coord;
+            const { name } = weatherData;
 
-            const googleWeatherUrl = `https://www.google.com/search?q=weather+${name}+${lat},${lon}`;
+            const googleWeatherUrl = `https://www.google.com/search?q=weather+${name}`;
 
-            Linking.openURL(googleWeatherUrl).catch(() => {
-                console.error('Failed to open weather app');
-                alert('Failed to open weather app. Please install a weather app.');
-            });
+            openWebView(googleWeatherUrl, navigation)
         }
     };
 
